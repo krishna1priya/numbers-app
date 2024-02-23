@@ -1,24 +1,156 @@
-<!doctype html>
-<html>
-   <head>
-
-   </head>
-   <body>
-    <h1>Arithmetic</h1>
-      <input id="firstnumber">
-      <label>+</label>
-      <input id="secondnumber">
-      <button onclick="add()">=</button>
-      <input id="answer">
-   </body>
-   <script>
-    function add()
-    {
-      var num1, num2, sum;
-      num1 = parseInt(document.getElementById("firstnumber").value);
-      num2 = parseInt(document.getElementById("secondnumber").value);
-      sum = num1 + num2;
-      document.getElementById("answer").value = sum;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        #calculator {
+            background-color: #036080;
+            border-radius: 5px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 300px;
+        }
+        #result {
+            grid-column: span 4;
+            height: 50px;
+            text-align: right;
+            padding: 10px;
+            background-color: white;
+            border: solid 2px #036080;
+            border-radius: 5px;
+            font-size: 1.5em;
+            margin-bottom: 10px; 
+        }
+        .button {
+            background-color: #036080;
+            border: solid 2px white;
+            border-radius: 5px;
+            font-size: 1.5em;
+            color: white;
+            padding: 10px 0;
+        }
+        .button:active {
+            background-color: #f0f0f0;
+        }
+        .operation, .clear {
+            background-color: #036080;
+            border: solid 2px white;
+            color: white; 
+        }
+        .equal {
+            grid-column: span 2;
+            background-color: #34a853;
+            height: 100%; 
+        }
+        .clear { grid-column: 4; }
+        .divide { grid-row: 2; grid-column: 4; }
+        .multiply { grid-row: 3; grid-column: 4; }
+        .subtract { grid-row: 4; grid-column: 4; }
+        .add { grid-row: 2; grid-column: 4; }
+        .equal { grid-row: 5 / 7; }
+        .equal { grid-column: unset; }
+    </style>
+</head>
+<body>
+    <div id="calculator">
+        <input type="text" id="result" disabled>
+        <button class="button">7</button>
+        <button class="button">8</button>
+        <button class="button">9</button>
+        <button class="button">1</button>
+        <button class="button">2</button>
+        <button class="button">3</button>
+        <button class="button">4</button>
+        <button class="button">5</button>
+        <button class="button">6</button>
+        <button class="button">0</button>
+        <button class="button">.</button>
+        <button class="button clear" onclick="clearResult()">C</button>
+        <button class="button operation divide">/</button>
+        <button class="button operation multiply">*</button>
+        <button class="button operation subtract">-</button>
+        <button class="button operation add">+</button>
+        <button class="button equal" onclick="calculate()">=</button>
+    </div>
+    <div class="column">
+        <section>
+            <h2>Prime check</h2>                
+            <label>Number to test:</label>
+            <input id="numberToTest"/>
+            <button onclick="isPrime()">Check</button>
+            <label id="primeCheckResult"></label>  
+        </section>           
+    </div>       
+    <script>
+        let result = document.getElementById("result");
+        function clearResult() {
+            result.value = "";
+        }
+        document.querySelectorAll('#calculator .button').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.classList.contains('operation') && !this.classList.contains('equal') && !this.classList.contains('clear')) {
+                    result.value += this.innerText;
+                }
+            });
+        });
+    function calculate() {
+    const operationMap = {
+        '+': 'add',
+        '-': 'subtract',
+        '*': 'multiply',
+        '/': 'divide',
+    };
+    const trimmedInput = result.value.trim();
+    const match = trimmedInput.match(/(-?\d+(\.\d+)?)\s*([+\-*/])\s*(-?\d+(\.\d+)?)/);
+    if (match) {
+        const [, n, , operator, m] = match;
+        const operation = operationMap[operator.trim()];
+        fetch(`https://arithmetic-service-1sj0.onrender.com/${operation}/${n}/${m}`)
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data); 
+        result.value = data.calculationResult ? data.calculationResult : "Invalid response format";
+    })
+            .catch(error => {
+                console.error('Error:', error);
+                result.value = "Error";
+            });
+    } else {
+        result.value = " ";
     }
- </script>
+}   
+        document.querySelectorAll('.operation').forEach(button => {
+            button.addEventListener('click', function() {
+                if (result.value !== "" && !isNaN(result.value.slice(-1))) {
+                    result.value += ` ${this.innerText} `;
+                }
+            });
+        });
+
+        async function isPrime() {
+            const numberToTest = document.getElementById("numberToTest");            
+            let n = numberToTest.value;            
+            const response = await fetch("???" + n);
+            const result = await response.json();
+            document.getElementById("primeCheckResult").innerText = result;
+        }
+    </script>
+</body>
 </html>
