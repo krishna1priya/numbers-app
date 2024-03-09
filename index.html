@@ -92,7 +92,16 @@
             <button onclick="isPrime()">Check</button>
             <label id="primeCheckResult"></label>  
         </section>           
-    </div>       
+    </div> 
+    <div class="column">
+        <section>
+            <h2>Ciphers</h2>                
+            <label>Find cipher :</label>
+            <input id="textToEncode"/>
+            <button onclick="encodeCaesar()">Check</button>
+            <label id="findCipher"></label>  
+        </section>           
+    </div>        
     <script>
         let result = document.getElementById("result");
         function clearResult() {
